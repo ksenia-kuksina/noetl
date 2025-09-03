@@ -8,6 +8,24 @@ import moment from 'moment';
 
 const { Title, Text } = Typography;
 
+// Color palette for task states
+const getStatusColor = (status: string): string => {
+  switch (status.toLowerCase()) {
+    case 'success':
+    case 'completed':
+      return 'green';
+    case 'error':
+    case 'failed':
+      return 'red';
+    case 'in_progress':
+    case 'running':
+    case 'pending':
+      return 'blue';
+    default:
+      return 'default';
+  }
+};
+
 const ExecutionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -44,9 +62,14 @@ const ExecutionDetail: React.FC = () => {
   const columns = [
     { title: 'Event Type', dataIndex: 'event_type', key: 'event_type' },
     { title: 'Node Name', dataIndex: 'node_name', key: 'node_name' },
-    { title: 'Status', dataIndex: 'status', key: 'status', render: (status: string) => <Tag color={status === 'success' ? 'green' : 'red'}>{status}</Tag> },
+    { 
+      title: 'Status', 
+      dataIndex: 'status', 
+      key: 'status', 
+      render: (status: string) => <Tag color={getStatusColor(status)}>{status}</Tag> 
+    },
     { title: 'Timestamp', dataIndex: 'timestamp', key: 'timestamp', render: (ts: string) => moment(ts).format('YYYY-MM-DD HH:mm:ss') },
-    { title: 'Duration', dataIndex: 'duration', key: 'duration', render: (d: number) => `${d}s` },
+    { title: 'Duration', dataIndex: 'duration', key: 'duration', render: (d: number) => d ? `${d}s` : '-' },
   ];
 
   return (
@@ -58,7 +81,7 @@ const ExecutionDetail: React.FC = () => {
       <Space direction="vertical" size="small">
         <Text strong>ID:</Text> <Text code>{execution.id}</Text>
         <Text strong>Playbook:</Text> <Text>{execution.playbook_name}</Text>
-        <Text strong>Status:</Text> <Tag color={execution.status === 'completed' ? 'green' : execution.status === 'failed' ? 'red' : 'blue'}>{execution.status}</Tag>
+        <Text strong>Status:</Text> <Tag color={getStatusColor(execution.status)}>{execution.status}</Tag>
         <Text strong>Start Time:</Text> <Text>{moment(execution.start_time).format('YYYY-MM-DD HH:mm:ss')}</Text>
         <Text strong>End Time:</Text> <Text>{execution.end_time ? moment(execution.end_time).format('YYYY-MM-DD HH:mm:ss') : '-'}</Text>
         <Text strong>Progress:</Text> <Text>{execution.progress}%</Text>

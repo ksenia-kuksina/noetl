@@ -31,6 +31,17 @@ export interface ExecutionData {
   progress: number;
   result?: any;
   error?: string;
+  events?: ExecutionEvent[];
+}
+
+export interface ExecutionEvent {
+  event_id: string;
+  event_type: string;
+  node_name: string;
+  status: 'success' | 'error' | 'in_progress' | 'pending';
+  timestamp: string;
+  duration?: number;
+  message?: string;
 }
 
 export interface DashboardStats {
